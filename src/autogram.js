@@ -1,7 +1,12 @@
 require("babel-core/register");
 require("babel-polyfill");
 
-const nightmare = require('nightmare')({show: true});
+const nightmare = require('nightmare')({
+  show: true,
+  webPreferences: {
+    partition: 'nopersist'
+  }
+});
 const cheerio = require('cheerio');
 const request = require('request-promise');
 const colors = require("colors/safe");
@@ -9,9 +14,7 @@ const vo = require('vo');
 
 module.exports = (spinner, statusPrefix, hashtags, excludes, interval, username, password) => {
   const cleanedTags = hashtags => {
-    return hashtags.split(' ').map(t => {
-      return t.indexOf('#') === 0 ? t : `#${t}`;
-    });
+    return hashtags.split(' ').map(t => t);
   };
 
   const intervalInSeconds = interval => {
@@ -39,7 +42,9 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, interval, username,
     return spinner;
   }
 
-  statusMsg(`Searching for posts tagged "${cleanedTags(hashtags).join(', ')}" every ${interval}... starting now!`);
+  let tags = cleanedTags(hashtags);
+
+  statusMsg(`Searching for posts tagged "#${tags.join(', #')}" every ${interval}... starting now!`);
 
   const main = function * () {
     yield nightmare
@@ -59,8 +64,16 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, interval, username,
         })
       })
       .then(hasInvalidCredentials => {
-        throw new Error('Invalid credentials!');
+        if (hasInvalidCredentials) {
+          throw new Error('Invalid credentials!');
+        }
       });
+
+    while (tags.length > 0) {
+      yield nightmare
+        .goto(`https://www.instagram.com/explore/tags/${tags.shift()}`)
+        .wait(2000)
+    }
   };
 
   vo(main)(err => {
