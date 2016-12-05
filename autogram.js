@@ -45,11 +45,13 @@ prompt
   .get({
     properties: {
       username: {
+        description: 'Enter you Instagram username',
         pattern: /^[a-zA-Z\s\-]+$/,
         message: 'Name must be only letters, spaces, or dashes',
         required: true
       },
       password: {
+        description: 'Enter your password (input will NOT be visible)',
         hidden: true,
         required: true
       }
@@ -62,6 +64,14 @@ prompt
     spinner.text = msg;
     spinner.start();
 
-    autogram(spinner, msg, argv.hashtags, argv.excludes, argv.interval || '10mn');
+    autogram(
+      spinner,
+      msg,
+      argv.hashtags,
+      argv.excludes,
+      argv.interval || '10mn',
+      result.username,
+      result.password
+    );
   });
 

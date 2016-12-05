@@ -4,9 +4,10 @@ require("babel-polyfill");
 const nightmare = require('nightmare')({show: true});
 const cheerio = require('cheerio');
 const request = require('request-promise');
+const colors = require("colors/safe");
 const vo = require('vo');
 
-module.exports = (spinner, statusPrefix, hashtags, excludes, interval) => {
+module.exports = (spinner, statusPrefix, hashtags, excludes, interval, username, password) => {
   const cleanedTags = hashtags => {
     return hashtags.split(' ').map(t => {
       return t.indexOf('#') === 0 ? t : `#${t}`;
@@ -32,9 +33,40 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, interval) => {
   }
 
   const msg = status(statusPrefix);
-  spinner.text = msg(`Searching for posts tagged "${cleanedTags(hashtags).join(', ')}" every ${interval}... starting now!`);
+
+  const statusMsg = text => {
+    spinner.text = msg(text);
+    return spinner;
+  }
+
+  statusMsg(`Searching for posts tagged "${cleanedTags(hashtags).join(', ')}" every ${interval}... starting now!`);
 
   const main = function * () {
-
+    yield nightmare
+      .viewport(800, 600)
+      .useragent('Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36')
+      .goto('https://www.instagram.com')
+      .wait(4000)
+      .click('[href="javascript:;"]')
+      .wait(1000)
+      .type('input[name="username"]', username)
+      .type('input[name="password"]', password)
+      .click('button')
+      .wait(2000)
+      .evaluate(() => {
+        return new Promise((resolve, reject) => {
+          return resolve(!!document.querySelector('#slfErrorAlert'))
+        })
+      })
+      .then(hasInvalidCredentials => {
+        throw new Error('Invalid credentials!');
+      });
   };
+
+  vo(main)(err => {
+    if (err) {
+      statusMsg(colors.red(`ERROR [${err.message}] -- Aborting session...`))
+      setTimeout(() => process.exit(), 1000);
+    };
+  });
 }
