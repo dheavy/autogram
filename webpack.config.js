@@ -16,7 +16,7 @@ if (env === 'build') {
 }
 
 var config = {
-  entry: ['babel-polyfill', __dirname + '/src/autogram.js', , __dirname + '/src/status.js'],
+  entry: ['babel-polyfill', __dirname + '/src/autogram.js'],
   devtool: 'source-map',
   output: {
     path: __dirname + '/lib',
