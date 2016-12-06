@@ -18,11 +18,6 @@ const argv = require('yargs')
     'run', 'Launch bot to automatize likes/comments ' +
     'actions on posts of a given hashtag.'
   )
-  .option('i', {
-    alias: 'interval',
-    describe: 'Interval between each run of the bot ' +
-    'for new content; can be <integer>mn, <integer>hrs.'
-  })
   .option('t', {
     alias: 'hashtags',
     describe: 'Will run automatized actions on posts matching ' +
@@ -33,6 +28,18 @@ const argv = require('yargs')
     describe: 'Will avoid applying actions on posts matching ' +
     'the given list of excluded hashtags.'
   })
+  .option('i', {
+    alias: 'interval',
+    describe: 'Interval between each run of the bot ' +
+    'for new content; can be <integer>mn, <integer>hrs. Defaults to 20mn.'
+  })
+  .option('m', {
+    alias: 'maxscrolls',
+    describe: 'Number of times the bot should scroll to lazily load posts ' +
+    'on a given tag. The more scrolls, the more posts it will then act on, ' +
+    'the longer it will take. If you increase this values, you should increase ' +
+    '`--interval` as well. Defaults to 50.'
+   })
   .help('h')
   .alias('h', 'help')
   .epilog('MIT Licensed - Davy Peter Braun')
@@ -69,7 +76,8 @@ prompt
       msg,
       argv.hashtags,
       argv.excludes,
-      argv.interval || '10mn',
+      argv.interval || '20mn',
+      argv.maxscrolls || 50,
       result.username.trim(),
       result.password.trim()
     );

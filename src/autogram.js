@@ -12,7 +12,7 @@ const request = require('request-promise');
 const colors = require("colors/safe");
 const vo = require('vo');
 
-module.exports = (spinner, statusPrefix, hashtags, excludes, interval, username, password) => {
+module.exports = (spinner, statusPrefix, hashtags, excludes, interval, maxScroll, username, password) => {
   const cleanedTags = hashtags => {
     return hashtags.split(' ').map(t => t);
   };
@@ -47,17 +47,29 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, interval, username,
   statusMsg(`Searching for posts tagged "#${tags.join(', #')}" every ${interval}... starting now!`);
 
   const main = function * () {
+    let currentWinHeight = 0;
+    let previousWinHeight;
+    let scrollIterations = 0;
+
     yield nightmare
       .viewport(800, 600)
       .useragent('Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36')
+
+      // Go to Instagram's landing page.
       .goto('https://www.instagram.com')
       .wait(4000)
+
+      // Click "sign in" to display login form.
       .click('[href="javascript:;"]')
       .wait(1000)
+
+      // Enter credentials.
       .type('input[name="username"]', username)
       .type('input[name="password"]', password)
       .click('button')
       .wait(2000)
+
+      // Check and stop if login fails.
       .evaluate(() => {
         return new Promise((resolve, reject) => {
           return resolve(!!document.querySelector('#slfErrorAlert'))
@@ -69,11 +81,35 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, interval, username,
         }
       });
 
-    while (tags.length > 0) {
+    // Explore each tags.
+   // while (tags.length > 0) {
       yield nightmare
         .goto(`https://www.instagram.com/explore/tags/${tags.shift()}`)
-        .wait(2000)
-    }
+        .wait(1000)
+
+      // Click on "load more" below content to trigger lazy-loading
+        // of content in page.
+        .click('a[href*="?max_id"]')
+        .wait(1000)
+
+      // Trigger lazy load by scrolling down a few times.
+      while (previousWinHeight !== currentWinHeight) {
+        previousWinHeight = currentWinHeight;
+        scrollIterations++;
+
+        currentWinHeight = yield nightmare.evaluate(() => {
+          return document.body.scrollHeight;
+        });
+
+        if (scrollIterations < maxScroll) {
+          yield nightmare
+            .scrollTo(currentWinHeight, 0)
+            .wait(1000);
+        }
+      }
+
+
+    //}
   };
 
   vo(main)(err => {
