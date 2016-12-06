@@ -70,8 +70,8 @@ prompt
       argv.hashtags,
       argv.excludes,
       argv.interval || '10mn',
-      result.username,
-      result.password
+      result.username.trim(),
+      result.password.trim()
     );
   });
 
