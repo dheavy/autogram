@@ -44,11 +44,11 @@ const argv = require('yargs')
     alias: 'comments',
     describe: 'A list of comments to add to the default list of canned comments, ' +
     'that are randomly typed by the bot in each posts. Comments are to be separated ' +
-    'by the `comment separator` (default is `___`, that is 3 underscores).'
+    'by the `comment separator` (default is `, `, that is comma + space).'
   })
   .option('s', {
     alias: 'separator',
-    describe: 'Comment separator character(s). Defaults to 3 underscores (`___`).'
+    describe: 'Comment separator character(s). Defaults to comma + space (`, `).'
   })
   .help('h')
   .alias('h', 'help')
@@ -87,7 +87,7 @@ prompt
       argv.hashtags,
       argv.excludes,
       argv.comments || '',
-      argv.separator || '___',
+      argv.separator || ', ',
       argv.interval || '20mn',
       (argv.maxscrolls === 0 ? 0 : (argv.maxscrolls || 50)),
       result.username.trim(),
