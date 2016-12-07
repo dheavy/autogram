@@ -16,6 +16,7 @@
     "cheerio": "^0.22.0",
     "colors": "^1.1.2",
     "nightmare": "^2.8.1",
+    "node-emoji": "^1.4.3",
     "ora": "^0.3.0",
     "prompt": "^1.0.0",
     "request": "^2.79.0",
