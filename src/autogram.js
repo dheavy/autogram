@@ -13,11 +13,16 @@ const colors = require('colors/safe');
 const _e = require('node-emoji').get;
 const vo = require('vo');
 
-module.exports = (spinner, statusPrefix, hashtags, excludes, interval, maxScroll, username, password) => {
-  const randomComment = () => {
-    const messages = [
+module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator, interval, maxScroll, username, password) => {
+  const randomComment = (comments, separator) => {
+    let messages = [
       '<3', 'sweet <3', 'aaaaw', '<3 <3 <3', 'cool!', 'very nice', 'love it'
     ];
+
+    if (comments && comments.trim() !== '') {
+      messages = messages.concat(comments.split(separator));
+    }
+
     return messages[Math.floor(Math.random() * messages.length)]
   };
 
@@ -172,7 +177,7 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, interval, maxScroll
               .click('article div section a[href="#"]')
 
               // Add random comment and press ENTER to validate.
-              .type('form input', randomComment())
+              .type('form input', randomComment(comments, separator))
               .wait(2000)
               .type('form input', '\u000d')
               .wait(1000);

@@ -40,6 +40,16 @@ const argv = require('yargs')
     'the longer it will take. If you increase this values, you should increase ' +
     '`--interval` as well. Defaults to 50.'
    })
+  .option('c', {
+    alias: 'comments',
+    describe: 'A list of comments to add to the default list of canned comments, ' +
+    'that are randomly typed by the bot in each posts. Comments are to be separated ' +
+    'by the `comment separator` (default is `___`, that is 3 underscores).'
+  })
+  .option('s', {
+    alias: 'separator',
+    describe: 'Comment separator character(s). Defaults to 3 underscores (`___`).'
+  })
   .help('h')
   .alias('h', 'help')
   .epilog('MIT Licensed - Davy Peter Braun')
@@ -76,6 +86,8 @@ prompt
       msg,
       argv.hashtags,
       argv.excludes,
+      argv.comments || '',
+      argv.separator || '___',
       argv.interval || '20mn',
       (argv.maxscrolls === 0 ? 0 : (argv.maxscrolls || 50)),
       result.username.trim(),
