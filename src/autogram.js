@@ -57,11 +57,11 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, interval, maxScroll
 
       // Go to Instagram's landing page.
       .goto('https://www.instagram.com')
-      .wait(4000)
+      .wait('[href="javascript:;"]')
 
       // Click "sign in" to display login form.
       .click('[href="javascript:;"]')
-      .wait(1000)
+      .wait('input[name="username"]')
 
       // Enter credentials.
       .type('input[name="username"]', username)
@@ -82,12 +82,12 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, interval, maxScroll
       });
 
     // Explore each tags.
-   // while (tags.length > 0) {
+    while (tags.length > 0) {
       yield nightmare
         .goto(`https://www.instagram.com/explore/tags/${tags.shift()}`)
-        .wait(1000)
+        .wait('a[href*="?max_id"]')
 
-      // Click on "load more" below content to trigger lazy-loading
+        // Click on "load more" below content to trigger lazy-loading
         // of content in page.
         .click('a[href*="?max_id"]')
         .wait(1000)
@@ -108,8 +108,21 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, interval, maxScroll
         }
       }
 
+      // Content should now be ready.
+      // Capture a list of hyperlinks of posts to act on.
+      let posts = yield nightmare.evaluate(() => {
+        return [].map.call(
+          document.querySelectorAll('a[href*="?tagged=instagood"]'), elm => elm.href
+        );
+      });
 
-    //}
+      for (let i = 0; i < posts.length; i++) {
+        yield nightmare
+          .goto(posts[i])
+          .wait('article div section a[href="#"]')
+          .click('article div section a[href="#"]')
+      }
+    }
   };
 
   vo(main)(err => {

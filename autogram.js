@@ -77,7 +77,7 @@ prompt
       argv.hashtags,
       argv.excludes,
       argv.interval || '20mn',
-      argv.maxscrolls || 50,
+      (argv.maxscrolls === 0 ? 0 : (argv.maxscrolls || 50)),
       result.username.trim(),
       result.password.trim()
     );
