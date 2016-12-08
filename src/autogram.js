@@ -10,7 +10,6 @@ const nightmare = require('nightmare')({
 const cheerio = require('cheerio');
 const request = require('request-promise');
 const colors = require('colors/safe');
-const _e = require('node-emoji').get;
 const vo = require('vo');
 
 module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator, maxScroll, username, password) => {
