@@ -13,7 +13,7 @@ const colors = require('colors/safe');
 const _e = require('node-emoji').get;
 const vo = require('vo');
 
-module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator, interval, maxScroll, username, password) => {
+module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator, maxScroll, username, password) => {
   const randomComment = (comments, separator) => {
     let messages = ['great'];
 
@@ -26,18 +26,6 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator
 
   const cleanedTags = hashtags => {
     return hashtags.split(' ').map(t => t);
-  };
-
-  const intervalInSeconds = interval => {
-    try {
-      const val = interval.split(/(?:^(\d{1,}))/gi).slice(1);
-      if (val.length !== 2) {
-        throw new Error()
-      };
-      return +val[0] * (val[1] === 'mn' ? 60 : 60 * 60);
-    } catch (err) {
-      return 10 * 60;
-    }
   };
 
   const status = (statusPrefix) => {
@@ -56,7 +44,7 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator
   let tags = cleanedTags(hashtags);
   let excludedTagsList = excludes ? excludes.split(' ') : [];
 
-  statusMsg(`Searching for posts tagged "#${tags.join(', #')}" every ${interval}... starting now!`);
+  statusMsg(`Searching for posts tagged "#${tags.join(', #')}"`);
 
   const main = function * () {
     let currentWinHeight = 0;
