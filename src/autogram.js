@@ -15,9 +15,7 @@ const vo = require('vo');
 
 module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator, interval, maxScroll, username, password) => {
   const randomComment = (comments, separator) => {
-    let messages = [
-      '<3', 'sweet <3', 'aaaaw', '<3 <3 <3', 'cool!', 'very nice', 'love it'
-    ];
+    let messages = ['great'];
 
     if (comments && comments.trim() !== '') {
       messages = messages.concat(comments.split(separator));
@@ -96,7 +94,7 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator
       });
 
     // Explore each tags.
-   // while (tags.length > 0) {
+    while (tags.length > 0) {
       let tag = tags.shift();
 
       yield nightmare
@@ -164,13 +162,12 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator
           let isUnavailable = yield nightmare
             // Check if content is unavailable.
             .evaluate(() => {
-              return !!document.querySelector('.error-container');
+              return !!document.querySelector('.dialog-404');
             });
 
           if (!isUnavailable) {
             yield nightmare
               // Wait for page to be rendered.
-              .wait('article div section a[href="#"]')
               .wait('form input')
 
               // Click on like button
@@ -184,7 +181,10 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator
           }
         }
       }
-    //}
+    }
+
+    yield nightmare.end();
+    process.exit();
   };
 
   vo(main)(err => {
