@@ -44,6 +44,10 @@ const argv = require('yargs')
     alias: 'separator',
     describe: 'Comment separator character(s). Defaults to comma + space (`, `).'
   })
+  .option('v', {
+    alias: 'visible',
+    describe: 'If set, displays the window to enable visual monitoring.'
+  })
   .help('h')
   .alias('h', 'help')
   .epilog('MIT Licensed - Davy Peter Braun')
@@ -76,15 +80,19 @@ prompt
     spinner.start();
 
     autogram(
-      spinner,
-      msg,
-      argv.hashtags,
-      argv.excludes,
-      argv.comments || '',
-      argv.separator || ', ',
-      (argv.maxscrolls === 0 ? 0 : (argv.maxscrolls || 50)),
-      result.username.trim(),
-      result.password.trim()
+      {
+        hashtags: argv.hashtags,
+        excludes: argv.excludes,
+        comments: argv.comments || '',
+        separator: argv.separator || ', ',
+        isShown: !!argv.visible || false,
+        maxScrolls: (argv.maxscrolls === 0 ? 0 : (argv.maxscrolls || 50))
+      },
+      {
+        username: result.username.trim(),
+        password: result.password.trim()
+      },
+      {spinner, statusPrefix: msg}
     );
   });
 

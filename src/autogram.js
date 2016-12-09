@@ -1,18 +1,34 @@
 require("babel-core/register");
 require("babel-polyfill");
 
-const nightmare = require('nightmare')({
-  show: true,
-  webPreferences: {
-    partition: 'nopersist'
-  }
-});
 const cheerio = require('cheerio');
 const request = require('request-promise');
 const colors = require('colors/safe');
 const vo = require('vo');
 
-module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator, maxScroll, username, password) => {
+/**
+ * Run Autogram bot.
+ *
+ * @param  {object} params      Contains hashtags, excludes, comments, separator, isShown, maxScrolls parameters.
+ * @param  {object} credentials User's instagram username and password.
+ * @param  {object} utils       Includes log related objects, if used in CLI mode.
+ * @return {object} Autogram module.
+ */
+module.exports = (params, credentials, utils) => {
+  const nightmare = require('nightmare')({
+    show: params.isShown,
+    webPreferences: {
+      partition: 'nopersist'
+    }
+  });
+
+  /**
+   * Pull a random canned comment.
+   *
+   * @param  {string} comments  Set of comments to include, separated by `separator`.
+   * @param  {string} separator Separator string used to split comment string into an array.
+   * @return {string} A random comment from the list.
+   */
   const randomComment = (comments, separator) => {
     let messages = ['great'];
 
@@ -23,28 +39,39 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator
     return messages[Math.floor(Math.random() * messages.length)]
   };
 
+  /**
+   * Clean string of set of hashtags passed as arguments.
+   * Possibly removing pound sign if included.
+   *
+   * @param  {string} hashtags A set of hashtags separated by a space.
+   * @return {array}  Array of hashtag to scan for.
+   */
   const cleanedTags = hashtags => {
-    return hashtags.split(' ').map(t => t);
+    return hashtags.split(' ').map(t => t.indexOf('#') === 0 ? t.substring(1) : t);
   };
 
-  const status = (statusPrefix) => {
-    return function (msg) {
-      return `${statusPrefix} - ${msg}`;
-    }
-  }
-
-  const msg = status(statusPrefix);
-
+  /**
+   * [description]
+   * @param  {[type]} text [description]
+   * @return {[type]}      [description]
+   */
   const statusMsg = text => {
-    spinner.text = msg(text);
-    return spinner;
+    if (!utils.spinner && !utils.statusPrefix) return;
+    utils.spinner.text = (prefix => msg => `${prefix} - ${msg}`)(utils.statusPrefix)(text);
+    return utils.spinner;
   }
 
-  let tags = cleanedTags(hashtags);
-  let excludedTagsList = excludes ? excludes.split(' ') : [];
+  // Create usable lists of tags to use and to exclude.
+  let tags = cleanedTags(params.hashtags);
+  let excludedTagsList = params.excludes ? params.excludes.split(' ') : [];
 
   statusMsg(`Searching for posts tagged "#${tags.join(', #')}"`);
 
+  /**
+   * Generator running the scraping and interaction process.
+   *
+   * @yield {mixed}
+   */
   const main = function * () {
     let currentWinHeight = 0;
     let previousWinHeight;
@@ -63,8 +90,8 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator
       .wait('input[name="username"]')
 
       // Enter credentials.
-      .type('input[name="username"]', username)
-      .type('input[name="password"]', password)
+      .type('input[name="username"]', credentials.username)
+      .type('input[name="password"]', credentials.password)
       .click('button')
       .wait(2000)
 
@@ -81,6 +108,7 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator
       });
 
     // Explore each tags.
+    // TODO: Not working for several tags - refactor me.
     while (tags.length > 0) {
       let tag = tags.shift();
 
@@ -102,7 +130,7 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator
           return document.body.scrollHeight;
         });
 
-        if (scrollIterations < maxScroll) {
+        if (scrollIterations < params.maxScrolls) {
           yield nightmare
             .scrollTo(currentWinHeight, 0)
             .wait(1000);
@@ -143,7 +171,7 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator
             const containsExcludedHashtags = excludedTagsList.filter(t => tags.indexOf(t) > -1).length;
 
             return hasAlreadyLiked || hasAlreadyCommented || containsExcludedHashtags;
-          }, username, excludedTagsList);
+          }, credentials.username, excludedTagsList);
 
         if (!canInteract) {
           let isUnavailable = yield nightmare
@@ -161,7 +189,7 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator
               .click('article div section a[href="#"]')
 
               // Add random comment and press ENTER to validate.
-              .type('form input', randomComment(comments, separator))
+              .type('form input', randomComment(params.comments, params.separator))
               .wait(2000)
               .type('form input', '\u000d')
               .wait(1000);
@@ -171,7 +199,7 @@ module.exports = (spinner, statusPrefix, hashtags, excludes, comments, separator
     }
 
     yield nightmare.end();
-    process.exit();
+    return process.exit();
   };
 
   vo(main)(err => {
