@@ -1,41 +1,50 @@
 {
   "name": "autogram",
-  "version": "0.0.1",
-  "main": "autogram.js",
+  "version": "1.1.0",
+  "description": "Instagram bot liking and commenting on your behalf.",
+  "main": "app.js",
   "repository": {
     "url": "git@github.com:dheavy/autogram.git",
     "type": "git"
   },
   "scripts": {
-    "build": "WEBPACK_ENV=build webpack",
-    "dev": "WEBPACK_ENV=dev webpack --progress --colors --watch"
+    "dev": "WEBPACK_ENV=dev webpack --progress --colors --watch",
+    "start": "./node_modules/.bin/electron ./src/app",
+    "build": "WEBPACK_ENV=build webpack && ./node_modules/.bin/electron-packager . --out=build --asar --overwrite --all",
+    "postinstall": "install-app-deps"
   },
   "author": "Davy Peter Braun <hello@davybraun.com>",
   "license": "MIT",
   "dependencies": {
     "cheerio": "^0.22.0",
-    "colors": "^1.1.2",
+    "electron-builder": "^10.6.1",
+    "material-design-lite": "^1.2.1",
     "nightmare": "^2.8.1",
-    "ora": "^0.3.0",
-    "prompt": "^1.0.0",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
-    "vo": "^4.0.2",
-    "yargs": "^6.5.0"
+    "vo": "^4.0.2"
   },
   "devDependencies": {
     "babel": "^6.5.2",
-    "babel-core": "^6.18.2",
-    "babel-eslint": "^7.1.1",
-    "babel-loader": "^6.2.8",
+    "babel-core": "^6.20.0",
+    "babel-loader": "^6.2.9",
     "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-polyfill": "^6.16.0",
+    "babel-polyfill": "^6.20.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-stage-0": "^6.16.0",
-    "eslint": "^3.11.1",
-    "eslint-loader": "^1.6.1",
+    "electron-builder": "^10.6.1",
+    "electron-prebuilt": "^1.4.11",
     "json-loader": "^0.5.4",
-    "webpack": "^1.13.3",
+    "webpack": "^1.14.0",
     "webpack-node-externals": "^1.5.4"
+  },
+  "build": {
+    "appId": "com.davybraun.autogram",
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "iconUrl": "https://link-to-icon"
+    }
   }
 }

@@ -16,7 +16,7 @@ if (env === 'build') {
 }
 
 var config = {
-  entry: ['babel-polyfill', __dirname + '/src/autogram.js'],
+  entry: ['babel-polyfill', __dirname + '/src/app.js', __dirname + '/src/autogram.js'],
   devtool: 'source-map',
   output: {
     path: __dirname + '/lib',
@@ -29,11 +29,6 @@ var config = {
   externals: [nodeExternals()],
   module: {
     loaders: [
-      {
-        test: /(\.jsx|\.js)$/,
-        loader: 'eslint-loader',
-        exclude: /(node_modules|bower_components)/
-      },
       {
         test: /(\.json)$/,
         loader: 'json-loader',
