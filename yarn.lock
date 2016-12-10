@@ -885,6 +885,13 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
+bootstrap@4.0.0-alpha.5:
+  version "4.0.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.0.0-alpha.5.tgz#a126b648c3bd2f52b8fad4bbc5e2d0ad2abf7064"
+  dependencies:
+    jquery "1.9.1 - 3"
+    tether "^1.3.7"
+
 boxen@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/boxen/-/boxen-0.6.0.tgz#8364d4248ac34ff0ef1b2f2bf49a6c60ce0d81b6"
@@ -1642,7 +1649,7 @@ fstream-ignore@~1.0.5:
     inherits "2"
     minimatch "^3.0.0"
 
-fstream@^1.0.0, fstream@^1.0.2, fstream@~1.0.10:
+fstream@^1.0.0, fstream@^1.0.10, fstream@^1.0.2, fstream@~1.0.10:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/fstream/-/fstream-1.0.10.tgz#604e8a92fe26ffd9f6fae30399d4984e1ab22822"
   dependencies:
@@ -1758,6 +1765,10 @@ graceful-fs@^4.1.0, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9:
 "graceful-readlink@>= 1.0.0":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
+
+hammerjs, hammerjs@^2.0.4:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/hammerjs/-/hammerjs-2.0.8.tgz#04ef77862cff2bb79d30f7692095930222bf60f1"
 
 har-validator@~2.0.6:
   version "2.0.6"
@@ -2033,6 +2044,14 @@ jodid25519@^1.0.0:
   dependencies:
     jsbn "~0.1.0"
 
+jquery, "jquery@1.9.1 - 3":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.1.1.tgz#347c1c21c7e004115e0a4da32cece041fad3c8a3"
+
+jquery@^2.1.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.2.4.tgz#2c89d6889b5eac522a7eea32c14521559c6cbf02"
+
 js-tokens@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-2.0.0.tgz#79903f5563ee778cc1162e6dcf1a0027c97f9cb5"
@@ -2259,9 +2278,13 @@ map-obj@^1.0.0, map-obj@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-1.0.1.tgz#d933ceb9205d82bdcf4886f6742bdc2b4dea146d"
 
-material-design-lite:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/material-design-lite/-/material-design-lite-1.2.1.tgz#09e5caab2575af8ee21b2630bff175c5a822c662"
+materialize-css:
+  version "0.97.8"
+  resolved "https://registry.yarnpkg.com/materialize-css/-/materialize-css-0.97.8.tgz#e39ce2056785b0c4e9cd4847c2cdf153e19c47cf"
+  dependencies:
+    hammerjs "^2.0.4"
+    jquery "^2.1.4"
+    node-archiver "^0.3.0"
 
 memory-fs@^0.2.0:
   version "0.2.0"
@@ -2386,6 +2409,13 @@ nightmare:
     rimraf "^2.4.3"
     sliced "1.0.1"
     split2 "^2.0.1"
+
+node-archiver@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/node-archiver/-/node-archiver-0.3.0.tgz#b9f1afe5006d0bdf29260181833a070978bc6947"
+  dependencies:
+    fstream "^1.0.10"
+    tar "^2.2.1"
 
 node-emoji@^1.4.3:
   version "1.4.3"
@@ -3238,13 +3268,17 @@ tar-stream@^1.5.0:
     readable-stream "^2.0.0"
     xtend "^4.0.0"
 
-tar@~2.2.1:
+tar@^2.2.1, tar@~2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/tar/-/tar-2.2.1.tgz#8e4d2a256c0e2185c6b18ad694aec968b83cb1d1"
   dependencies:
     block-stream "*"
     fstream "^1.0.2"
     inherits "2"
+
+tether@^1.3.7:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/tether/-/tether-1.4.0.tgz#0f9fa171f75bf58485d8149e94799d7ae74d1c1a"
 
 throttleit@0.0.2:
   version "0.0.2"
