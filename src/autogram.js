@@ -30,7 +30,7 @@ module.exports = (params, credentials, utils) => {
    * @return {string} A random comment from the list.
    */
   const randomComment = (comments, separator) => {
-    let messages = ['great'];
+    let messages = ['great', 'nice', '<3', 'I dig it', 'sweet'];
 
     if (comments && comments.trim() !== '') {
       messages = messages.concat(comments.split(separator));
@@ -147,17 +147,16 @@ module.exports = (params, credentials, utils) => {
 
 
       for (let i = 0; i < posts.length; i++) {
-        let canInteract = yield nightmare
+        let cannotInteract = yield nightmare
           // Go to post page.
           .goto(posts[i])
 
           // Wait for OP's comment to be rendered,
           // then check if I didn't leave a "like"
           // or commented it already.
-          .wait('h1 span')
+          .wait(2000)
           .evaluate((username, excludedTagsList) => {
-            const opComment = document.querySelector('h1 span').innerText;
-            const tags = opComment.split(' ').filter(o => o.indexOf('#') === 0).join(' ');
+            const tags = Array.from(document.querySelectorAll('a[href*="/explore/tags"]'));
             const userNames = [].map.call(
               [].filter.call(
                 document.querySelectorAll('article:nth-child(1) div ul li a'),
@@ -173,7 +172,7 @@ module.exports = (params, credentials, utils) => {
             return hasAlreadyLiked || hasAlreadyCommented || containsExcludedHashtags;
           }, credentials.username, excludedTagsList);
 
-        if (!canInteract) {
+        if (!cannotInteract) {
           let isUnavailable = yield nightmare
             // Check if content is unavailable.
             .evaluate(() => {
@@ -183,15 +182,15 @@ module.exports = (params, credentials, utils) => {
           if (!isUnavailable) {
             yield nightmare
               // Wait for page to be rendered.
-              .wait('form input')
+              .wait('article div section a[href="#"]')
 
               // Click on like button
               .click('article div section a[href="#"]')
 
               // Add random comment and press ENTER to validate.
-              .type('form input', randomComment(params.comments, params.separator))
+              .type('form textarea', randomComment(params.comments, params.separator))
               .wait(2000)
-              .type('form input', '\u000d')
+              .type('form textarea', '\u000d')
               .wait(1000);
           }
         }
